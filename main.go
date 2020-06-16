@@ -19,13 +19,13 @@ import (
 	"github.com/otiai10/copy"
 )
 
-// IntMapOrderedItem 定义结构体
+// IntMapOrderedItem 单个用户访问量结构体
 type IntMapOrderedItem struct {
 	Key   string
 	Value int
 }
 
-// DayOrderItem 日期排序
+// DayOrderItem 日期排序结构体
 type DayOrderItem struct {
 	DayStr string
 	Day    time.Time
@@ -204,7 +204,7 @@ func main() {
 			vistorsDays := make(map[string]map[string]int) //每天每个IP访问次数
 			statusDays := make(map[string]map[string]int)  //每天每个状态码出现次数
 
-			dayKeys := make(map[string]time.Time)
+			dayKeysMap := make(map[string]time.Time) //键为string,值为time.Time的map
 
 			// 使用带缓冲区的扫描器，每次读取一行内容
 			scanner := bufio.NewScanner(file)
@@ -221,7 +221,7 @@ func main() {
 				logTime, _ := time.Parse("02/Jan/2006:15:04:05", nodes[3][1:])
 				logDay := logTime.Format("2006-01-02")
 
-				dayKeys[logDay] = logTime
+				dayKeysMap[logDay] = logTime
 
 				// 设置日期
 				days[logDay] = true
@@ -253,8 +253,9 @@ func main() {
 				statusTotal[nodes[8]]++
 				statusDays[logDay][nodes[8]]++
 			}
-
-			dayKeysOrder := NewDayOrder(dayKeys)
+			
+			// 初始化日期结构体并排序
+			dayKeysOrder := NewDayOrder(dayKeysMap)
 			sort.Sort(dayKeysOrder)
 
 			if err := scanner.Err(); err != nil {
